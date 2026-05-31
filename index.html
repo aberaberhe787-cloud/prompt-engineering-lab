@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Engineering Lab & Playground | CBT Nuggets Companion</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Glowing Background Orbs -->
+    <div class="glow-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <div class="app-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div>
+                <div class="logo-container">
+                    <div class="logo-icon">P</div>
+                    <div>
+                        <span class="logo-text">PROMPT LAB</span>
+                        <span class="logo-sub">Studio & Academy</span>
+                    </div>
+                </div>
+                
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-tab="playground">
+                            <svg viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                            Design Studio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-tab="lessons">
+                            <svg viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Academy Syllabus
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-tab="challenges">
+                            <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                            Gamified Quests
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-tab="history">
+                            <svg viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Laboratory Logs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-tab="settings">
+                            <svg viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            Lab Configurations
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="mode-badge">
+                    <div class="mode-indicator simulated" id="mode-status-indicator"></div>
+                    <span id="mode-status-label" style="font-weight: 600; color: var(--text-secondary);">Simulated Engine</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace View Container -->
+        <main class="main-workspace">
+            
+            <!-- --- VIEW: PLAYGROUND --- -->
+            <section id="view-playground">
+                <header class="view-header">
+                    <div class="view-title">
+                        <h1>Prompt Engineering Studio</h1>
+                        <p>Author expert system directives, context tags, few-shots, and calibrate response style.</p>
+                    </div>
+                </header>
+                
+                <div class="playground-layout">
+                    <!-- Left: Studio Inputs -->
+                    <div class="playground-inputs">
+                        <!-- System Prompt Card -->
+                        <article class="glass-card system-prompt-card">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <div class="form-label">
+                                    <span>SYSTEM PROMPT DIRECTIVE</span>
+                                    <span class="desc">Persona, boundary constraints, guardrails</span>
+                                </div>
+                                <textarea class="textarea-input code-font" id="playground-system-prompt" rows="6" placeholder="You are an expert technical author. Your goal is to explain complex coding structures in markdown tables..."></textarea>
+                            </div>
+                        </article>
+
+                        <!-- Few-Shot Builder Card -->
+                        <article class="glass-card fewshot-card">
+                            <div class="fewshot-header">
+                                <div class="form-label" style="margin-bottom: 0;">
+                                    <span>FEW-SHOT EXEMPLARS BUILDER</span>
+                                </div>
+                                <button class="btn btn-secondary" id="btn-add-fewshot" style="padding: 6px 12px; font-size: 0.8rem;">+ Add Example</button>
+                            </div>
+                            <div class="fewshot-list" id="fewshot-list-container">
+                                <!-- Populated dynamically by app.js -->
+                            </div>
+                        </article>
+
+                        <!-- User Prompt Card -->
+                        <article class="glass-card user-prompt-card">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <div class="form-label">
+                                    <span>USER PROMPT INSTRUCTIONS</span>
+                                    <span class="desc">Active request input</span>
+                                </div>
+                                <textarea class="textarea-input" id="playground-user-prompt" rows="4" placeholder="Enter your instructions or wrap raw context datasets in delimiters..."></textarea>
+                            </div>
+                            
+                            <div class="playground-controls">
+                                <button class="btn btn-secondary" id="btn-reset-playground">Clear Workspace</button>
+                                <button class="btn btn-primary" id="btn-submit-prompt" style="padding: 12px 28px;">
+                                    Submit Prompt
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- Right: Parameters & Output Terminal -->
+                    <div class="playground-results">
+                        <!-- Model Parameters -->
+                        <article class="glass-card">
+                            <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 12px;">Model Control Parameters</h3>
+                            <div class="params-grid">
+                                <div class="param-slider-container">
+                                    <div class="slider-val-box">
+                                        <span>Temperature</span>
+                                        <span class="val" id="val-temp">0.70</span>
+                                    </div>
+                                    <input type="range" class="param-slider" id="param-temp" min="0" max="1.5" step="0.05" value="0.70">
+                                </div>
+                                <div class="param-slider-container">
+                                    <div class="slider-val-box">
+                                        <span>Max Output Tokens</span>
+                                        <span class="val" id="val-tokens">512</span>
+                                    </div>
+                                    <input type="range" class="param-slider" id="param-tokens" min="32" max="2048" step="32" value="512">
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- Response Terminal -->
+                        <article class="glass-card output-card">
+                            <div class="output-header">
+                                <h3 style="font-size: 0.95rem; font-weight: 700;">Model Output Terminal</h3>
+                                <div class="status-indicator-box">
+                                    <div class="spinner" id="output-spinner"></div>
+                                    <span id="output-status" style="font-weight:600; font-size:0.75rem; color:var(--text-muted);">Terminal Idle</span>
+                                </div>
+                            </div>
+                            
+                            <div class="terminal-window">
+                                <!-- Chain-of-thought terminal container -->
+                                <div class="cot-terminal-block" id="cot-terminal-block">
+                                    <div class="cot-label">
+                                        <svg viewBox="0 0 24 24" width="12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                        Chain-of-Thought Scratchpad
+                                    </div>
+                                    <div id="cot-content"></div>
+                                </div>
+                                
+                                <!-- Final response display -->
+                                <div class="response-block response-placeholder" id="response-content">
+                                    Awaiting token submission...
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- Real-time Prompt Auditor -->
+                        <article class="glass-card auditor-dashboard">
+                            <div class="auditor-metrics">
+                                <div class="score-circle-wrapper">
+                                    <svg class="score-svg">
+                                        <circle class="score-circle-bg" cx="40" cy="40" r="35"></circle>
+                                        <circle class="score-circle-bar" id="score-circle-bar" cx="40" cy="40" r="35"></circle>
+                                        <defs>
+                                            <linearGradient id="score-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" stop-color="var(--accent-cyan)"></stop>
+                                                <stop offset="100%" stop-color="var(--accent-blue)"></stop>
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                    <div class="score-text" id="score-val">0</div>
+                                </div>
+                                <div class="score-info">
+                                    <h3 id="score-grade-title">Evaluating Prompt...</h3>
+                                    <p id="score-grade-desc">Loading metrics.</p>
+                                </div>
+                            </div>
+
+                            <div class="audit-details-grid">
+                                <div class="audit-column strengths">
+                                    <h4>Detected Strengths</h4>
+                                    <ul class="audit-list" id="auditor-strengths">
+                                        <!-- Populated dynamically -->
+                                    </ul>
+                                </div>
+                                <div class="audit-column improvements">
+                                    <h4>Suggested Refinements</h4>
+                                    <ul class="audit-list" id="auditor-improvements">
+                                        <!-- Populated dynamically -->
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Raw Token Assembler visualizer drawer -->
+                            <div class="assembler-drawer">
+                                <div class="drawer-header" id="assembler-drawer-header">
+                                    <span>VIEW COMPILED PROMPT TOKEN STREAM</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                                <div class="drawer-content" id="assembler-drawer-content">
+                                    <!-- Populated dynamically by app.js -->
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <!-- --- VIEW: ACADEMY LESSONS --- -->
+            <section class="hide" id="view-lessons">
+                <header class="view-header">
+                    <div class="view-title">
+                        <h1>CBT Nuggets Academy Companion</h1>
+                        <p>Deep-dive prompt engineering principles. Explore templates and load them instantly into the studio.</p>
+                    </div>
+                </header>
+
+                <div class="lessons-layout">
+                    <!-- Left Navigation: Lessons List -->
+                    <aside class="lessons-sidebar" id="lessons-menu-list">
+                        <!-- Populated dynamically by app.js -->
+                    </aside>
+
+                    <!-- Right Panel: Lesson Details -->
+                    <article class="lesson-workspace" id="active-lesson-container">
+                        <!-- Populated dynamically by app.js -->
+                    </article>
+                </div>
+            </section>
+
+            <!-- --- VIEW: GAMIFIED QUESTS --- -->
+            <section class="hide" id="view-challenges">
+                <header class="view-header">
+                    <div class="view-title">
+                        <h1>Gamified Prompt Quests</h1>
+                        <p>Solve prompt challenges. Author prompts that pass automated verification rules and secure reward badges!</p>
+                    </div>
+                </header>
+
+                <!-- Quests Directory Grid -->
+                <div class="challenges-grid" id="challenges-grid-view">
+                    <!-- Populated dynamically by app.js -->
+                </div>
+
+                <!-- Quest Workspace Frame -->
+                <div class="challenge-workspace-container hide" id="challenge-workspace-view">
+                    <!-- Target details panel (Left/Sidebar in layout) -->
+                    <aside class="challenge-details-panel" id="challenge-info-panel">
+                        <!-- Populated dynamically by app.js -->
+                    </aside>
+
+                    <!-- Playground frame cloned for Quests (Right in layout) -->
+                    <div class="playground-inputs">
+                        <article class="glass-card system-prompt-card" style="border-left: 4px solid var(--accent-violet);">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <div class="form-label">
+                                    <span>YOUR SYSTEM PROMPT DIRECTIVE</span>
+                                    <span class="desc">Code your safety rules and directives here</span>
+                                </div>
+                                <textarea class="textarea-input code-font" id="challenge-system-prompt" rows="8" placeholder="Develop your system instructions to complete the quest goals..."></textarea>
+                            </div>
+                        </article>
+
+                        <article class="glass-card user-prompt-card" style="border-left: 4px solid var(--accent-cyan);">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <div class="form-label">
+                                    <span>QUEST EVALUATION INPUT DATA</span>
+                                    <span class="desc">System-delivered validation query</span>
+                                </div>
+                                <textarea class="textarea-input" id="challenge-user-prompt" rows="4" readonly style="opacity:0.85; background:var(--bg-input); cursor:not-allowed;"></textarea>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <!-- --- VIEW: LABORATORY LOGS (HISTORY) --- -->
+            <section class="hide" id="view-history">
+                <header class="view-header">
+                    <div class="view-title">
+                        <h1>Laboratory Logs</h1>
+                        <p>Audit and search your past prompt iterations. Reload historical structures back into the studio.</p>
+                    </div>
+                </header>
+
+                <div class="history-layout">
+                    <div class="history-toolbar">
+                        <div class="search-input-wrapper">
+                            <input type="text" class="search-input" id="history-search" placeholder="Search logs by system directive or score...">
+                        </div>
+                        <button class="btn btn-secondary text-danger" id="btn-clear-history" style="border-color: transparent;">Clear All Logs</button>
+                    </div>
+                    
+                    <div class="history-list" id="history-cards-container">
+                        <!-- Populated dynamically by app.js -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- --- VIEW: LAB CONFIGURATIONS --- -->
+            <section class="hide" id="view-settings">
+                <header class="view-header">
+                    <div class="view-title">
+                        <h1>Laboratory Configurations</h1>
+                        <p>Configure model engines. Switch between local simulation mode and live production APIs.</p>
+                    </div>
+                </header>
+
+                <div class="settings-layout">
+                    <!-- Engine Selection -->
+                    <article class="glass-card settings-card">
+                        <h3>Model Processing Mode</h3>
+                        <p>Select which backend runs your prompts. **Simulated Mode** runs instant heuristic calculations locally. **Live API Mode** routes queries directly to official production models.</p>
+                        
+                        <div class="radio-group">
+                            <label class="radio-option selected" for="mode-simulated">
+                                <input type="radio" name="model-mode" id="mode-simulated" value="simulated" checked>
+                                <div class="radio-option-content">
+                                    <h4>Simulated Engine (Offline-Ready)</h4>
+                                    <p>Heuristic matching, audits prompts instantly without paid keys. Fully robust for local learning.</p>
+                                </div>
+                            </label>
+
+                            <label class="radio-option" for="mode-live">
+                                <input type="radio" name="model-mode" id="mode-live" value="live">
+                                <div class="radio-option-content">
+                                    <h4>Live API Integration Mode</h4>
+                                    <p>Connect direct browser requests to Google Gemini, OpenAI, or Anthropic models.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </article>
+
+                    <!-- Live Keys Configuration -->
+                    <article class="glass-card settings-card hide" id="live-provider-settings">
+                        <h3>Official API Credentials</h3>
+                        <p>Your API credentials are stored exclusively in your browser's private `localStorage` and never leave your machine.</p>
+
+                        <div class="radio-group" style="margin-bottom: 24px;">
+                            <label class="radio-option selected" for="provider-gemini">
+                                <input type="radio" name="live-provider" id="provider-gemini" value="gemini" checked>
+                                <div class="radio-option-content">
+                                    <h4>Google Gemini (gemini-1.5-flash)</h4>
+                                    <p>Fast, robust, supports native browser calling with zero CORS issues.</p>
+                                </div>
+                            </label>
+
+                            <label class="radio-option" for="provider-openai">
+                                <input type="radio" name="live-provider" id="provider-openai" value="openai">
+                                <div class="radio-option-content">
+                                    <h4>OpenAI (gpt-4o-mini)</h4>
+                                    <p>Cost-effective, highly reliable, direct browser integration.</p>
+                                </div>
+                            </label>
+
+                            <label class="radio-option" for="provider-anthropic">
+                                <input type="radio" name="live-provider" id="provider-anthropic" value="anthropic">
+                                <div class="radio-option-content">
+                                    <h4>Anthropic (claude-3-5-sonnet)</h4>
+                                    <p>Requires local proxy config; standard browsers block direct browser Anthropic calls.</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="api-keys-grid">
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label class="form-label">Google Gemini API Key</label>
+                                <div class="key-input-wrapper">
+                                    <input type="password" class="text-input" id="key-gemini" placeholder="AIzaSy...">
+                                    <button class="btn-toggle-key" id="toggle-key-gemini" title="Toggle visibility">
+                                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label class="form-label">OpenAI API Key</label>
+                                <div class="key-input-wrapper">
+                                    <input type="password" class="text-input" id="key-openai" placeholder="sk-proj-...">
+                                    <button class="btn-toggle-key" id="toggle-key-openai" title="Toggle visibility">
+                                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <label class="form-label">Anthropic API Key</label>
+                                <div class="key-input-wrapper">
+                                    <input type="password" class="text-input" id="key-anthropic" placeholder="sk-ant-...">
+                                    <button class="btn-toggle-key" id="toggle-key-anthropic" title="Toggle visibility">
+                                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; justify-content: flex-end; gap:12px;">
+                            <button class="btn btn-primary" id="btn-save-keys" style="padding: 12px 28px;">Save API Credentials</button>
+                        </div>
+
+                        <div class="settings-badge-note">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-top:2px; flex-shrink:0;"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            <div>
+                                <span style="font-weight: 700; display:block; margin-bottom: 2px;">Local Storage Isolation Safeguard</span>
+                                <span>Your keys never touch any server. They are parsed and executed purely in memory inside your browser process to establish secure API handshakes.</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Sequential JavaScript module loads to support window.PromptLab namespace -->
+    <script src="data/lessons.js"></script>
+    <script src="data/challenges.js"></script>
+    <script src="services/simulator.js"></script>
+    <script src="services/api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
