@@ -111,6 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
             openai: document.getElementById("toggle-key-openai"),
             anthropic: document.getElementById("toggle-key-anthropic")
         },
+        modelOverrides: {
+            gemini: document.getElementById("model-gemini")
+        },
         btnSaveKeys: document.getElementById("btn-save-keys")
     };
 
@@ -1358,6 +1361,10 @@ document.addEventListener("DOMContentLoaded", () => {
         dom.keysInputs.gemini.value = window.PromptLab.api.getKey("gemini");
         dom.keysInputs.openai.value = window.PromptLab.api.getKey("openai");
         dom.keysInputs.anthropic.value = window.PromptLab.api.getKey("anthropic");
+        
+        if (dom.modelOverrides && dom.modelOverrides.gemini) {
+            dom.modelOverrides.gemini.value = localStorage.getItem("promptlab_model_gemini") || "";
+        }
     }
 
     // --- EVENT LISTENERS V2 ---
@@ -1483,6 +1490,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.PromptLab.api.deleteKey(provider);
             }
         });
+        
+        if (dom.modelOverrides && dom.modelOverrides.gemini) {
+            localStorage.setItem("promptlab_model_gemini", dom.modelOverrides.gemini.value.trim());
+        }
+        
         alert("API keys successfully saved locally.");
     });
 
