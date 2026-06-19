@@ -1,440 +1,408 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt Engineering Lab & Playground | AI Prompt Academy</title>
-    <meta name="description" content="Interactive AI Prompt Engineering Lab. Master zero-shot, few-shot, chain-of-thought, metaprompting, and jailbreak defense techniques with real-time auditing and gamified challenges.">
-    <link rel="stylesheet" href="style.css">
+    <title>Antigravity Prompt Engineering Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBase: '#09090b',
+                        darkSurface: '#18181b',
+                        accentBase: '#38bdf8',
+                        accentDark: '#0ea5e9'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom CSS mapping old app.js classNames to Tailwind styles -->
+    <style type="text/tailwindcss">
+        @layer components {
+            .hide { @apply hidden !important; }
+            .glass-card { @apply bg-darkSurface border border-zinc-800 rounded-xl p-6 shadow-lg; }
+            .btn { @apply px-4 py-2 font-medium rounded transition-colors text-sm; }
+            .btn-primary { @apply bg-accentBase hover:bg-accentDark text-white; }
+            .btn-secondary { @apply bg-zinc-800 hover:bg-zinc-700 text-zinc-300; }
+            
+            /* Old Layouts mapping */
+            .playground-layout { @apply grid grid-cols-1 lg:grid-cols-2 gap-8; }
+            .playground-inputs, .playground-results { @apply flex flex-col gap-6; }
+            .textarea-input { @apply w-full bg-black border border-zinc-700 rounded-lg p-4 text-sm text-zinc-300 focus:outline-none focus:border-accentBase transition-colors; }
+            .code-font { @apply font-mono text-emerald-400; }
+            .form-label { @apply flex justify-between items-end mb-2 text-xs font-bold uppercase tracking-wider text-accentBase; }
+            .form-label .desc { @apply text-zinc-500 font-normal normal-case; }
+            .form-group { @apply mb-4; }
+            
+            /* Nav Links */
+            .nav-link.active { @apply text-accentBase bg-accentBase/10 border-l-2 border-accentBase; }
+            
+            /* Score Circle */
+            .score-svg { transform: rotate(-90deg); width: 80px; height: 80px; }
+            .score-circle-bg { fill: none; stroke: #27272a; stroke-width: 6; }
+            .score-circle-bar { fill: none; stroke: #38bdf8; stroke-width: 6; stroke-dasharray: 220; stroke-dashoffset: 220; transition: stroke-dashoffset 1s ease; }
+            
+            /* Few Shots */
+            .fewshot-item { @apply bg-black/50 border border-zinc-800 rounded-lg p-4 relative mb-4; }
+            .fewshot-item-fields { @apply flex flex-col gap-3; }
+            .fewshot-input-box label { @apply block text-xs font-bold text-zinc-500 uppercase mb-1; }
+            .fewshot-textarea { @apply w-full bg-black border border-zinc-700 rounded p-2 text-xs text-zinc-300; }
+            .btn-remove-shot { @apply absolute top-2 right-2 text-zinc-600 hover:text-red-500 p-1; }
+            
+            /* Lessons Sidebar */
+            .lesson-nav-btn { @apply w-full text-left px-4 py-3 rounded-lg text-sm text-zinc-400 hover:bg-zinc-800 transition-colors border-l-2 border-transparent mb-1; }
+            .lesson-nav-btn.active { @apply text-white bg-zinc-800 border-accentBase; }
+            
+            /* Custom scrollbar */
+            ::-webkit-scrollbar { width: 6px; height: 6px; }
+            ::-webkit-scrollbar-track { background: transparent; }
+            ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+
+            /* Token Pills */
+            .token-pill { @apply inline-block px-1.5 py-0.5 rounded text-[10px] font-mono text-black font-bold mr-1 mb-1; }
+        }
+    </style>
 </head>
-<body>
+<body class="bg-darkBase text-slate-300 font-sans h-screen flex overflow-hidden selection:bg-accentBase selection:text-white">
 
-    <!-- Glowing Background Orbs -->
-    <div class="glow-orbs">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-    </div>
+    <!-- Sidebar -->
+    <aside class="w-64 bg-darkSurface border-r border-zinc-800 flex flex-col justify-between z-10 shrink-0">
+        <div>
+            <div class="p-6 border-b border-zinc-800">
+                <h1 class="text-xl font-black text-white tracking-tighter flex items-center gap-2">
+                    <svg class="w-6 h-6 text-accentBase" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    ANTIGRAVITY
+                </h1>
+                <p class="text-xs text-zinc-500 mt-1 font-mono uppercase tracking-widest">Zero-Mass Academy</p>
+            </div>
+            
+            <nav class="p-4 space-y-2">
+                <a href="#" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all border-l-2 border-transparent" data-tab="lessons">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    Zone 1: Launchpad
+                </a>
+                
+                <a href="#" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all border-l-2 border-transparent" data-tab="challenges">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
+                    Zone 2: Levitation
+                </a>
 
-    <div class="app-container">
+                <a href="#" class="nav-link active flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all border-l-2 border-transparent" data-tab="playground">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Zone 3: Sandbox
+                </a>
+
+                <div class="pt-6 pb-2">
+                    <p class="px-4 text-xs font-bold text-zinc-600 uppercase tracking-wider">System</p>
+                </div>
+                
+                <a href="#" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all border-l-2 border-transparent" data-tab="settings">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    Engine Config
+                </a>
+            </nav>
+        </div>
         
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div>
-                <div class="logo-container">
-                    <div class="logo-icon">P</div>
-                    <div>
-                        <span class="logo-text">PROMPT LAB</span>
-                        <span class="logo-sub">Enterprise Studio V2</span>
-                    </div>
-                </div>
-                
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-tab="playground">
-                            <svg viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                            Design Studio
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-tab="metaprompt">
-                            <svg viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            Metaprompt Generator
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-tab="arena">
-                            <svg viewBox="0 0 24 24"><path d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
-                            A/B Comparison Arena
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-tab="security">
-                            <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                            Red-Team Security
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-tab="lessons">
-                            <svg viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                            Academy Syllabus
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-tab="challenges">
-                            <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
-                            Gamified Quests
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-tab="history">
-                            <svg viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Laboratory Logs
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-tab="settings">
-                            <svg viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            Lab Configurations
-                        </a>
-                    </li>
-                </ul>
+        <div class="p-4 border-t border-zinc-800">
+            <div class="flex items-center gap-2 px-4 py-2 bg-zinc-900 rounded-md border border-zinc-800">
+                <div id="mode-status-indicator" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span id="mode-status-label" class="text-xs font-semibold text-zinc-300">Simulated Engine</span>
             </div>
+        </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 overflow-y-auto bg-darkBase relative">
+        
+        <!-- Zone 1: Launchpad (Lessons) -->
+        <section id="view-lessons" class="hide p-8 max-w-7xl mx-auto">
+            <header class="mb-10">
+                <h1 class="text-3xl font-black text-white tracking-tight mb-2">Zone 1: The Launchpad</h1>
+                <p class="text-zinc-400">Master Zero-Mass Basics. Strip away conversational weight and write raw, ultra-dense foundational instructions.</p>
+            </header>
+            <div class="flex flex-col md:flex-row gap-8 items-start">
+                <aside id="lessons-menu-list" class="w-full md:w-64 shrink-0 flex flex-col"></aside>
+                <article id="active-lesson-container" class="flex-1"></article>
+            </div>
+        </section>
+
+        <!-- Zone 2: Levitation (Challenges) -->
+        <section id="view-challenges" class="hide p-8 max-w-7xl mx-auto">
+            <header class="mb-10">
+                <h1 class="text-3xl font-black text-white tracking-tight mb-2">Zone 2: Structural Levitation</h1>
+                <p class="text-zinc-400">Interactive modules covering modern operational frameworks (Dynamic Persona Matrixing, Boundary Containment, and Failure-Mode Safeguards).</p>
+            </header>
+            <div id="challenges-grid-view" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
             
-            <div class="sidebar-footer">
-                <div class="mode-badge">
-                    <div class="mode-indicator simulated" id="mode-status-indicator"></div>
-                    <span id="mode-status-label" style="font-weight: 600; color: var(--text-secondary);">Simulated Engine</span>
+            <div id="certificate-unlock-container"></div>
+            
+            <!-- Challenge Workspace overlay -->
+            <div id="challenge-workspace-view" class="hide mt-8 bg-darkSurface border border-zinc-800 rounded-xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
+                <aside id="challenge-info-panel" class="w-full md:w-1/3 border-r border-zinc-800 p-6 bg-zinc-900/50 flex flex-col gap-6"></aside>
+                <div class="flex-1 p-6 flex flex-col gap-6">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-accentBase uppercase tracking-wider">Your Structural Blueprint (System)</label>
+                        <textarea id="challenge-system-prompt" class="w-full h-48 bg-black border border-zinc-700 rounded-lg p-4 font-mono text-sm text-emerald-400 focus:outline-none focus:border-accentBase focus:ring-1 focus:ring-accentBase transition-colors" placeholder="Define boundaries here..."></textarea>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Payload Data (User)</label>
+                        <textarea id="challenge-user-prompt" class="w-full h-24 bg-black border border-zinc-800 rounded-lg p-4 text-sm text-zinc-500 cursor-not-allowed" readonly></textarea>
+                    </div>
                 </div>
             </div>
-        </aside>
+        </section>
 
-        <!-- Main Workspace View Container -->
-        <main class="main-workspace">
+        <!-- Zone 3: Velocity Sandbox (Playground) -->
+        <section id="view-playground" class="p-8 max-w-[1600px] mx-auto h-full flex flex-col">
+            <header class="mb-6 shrink-0">
+                <h1 class="text-3xl font-black text-white tracking-tight mb-2">Zone 3: The Velocity Sandbox</h1>
+                <p class="text-zinc-400">Type heavy prompts, and watch the engine strip their weight, outputting perfected high-velocity vectors.</p>
+            </header>
             
-            <!-- VIEW: PLAYGROUND -->
-            <section id="view-playground">
-                <header class="view-header">
-                    <div class="view-title">
-                        <h1>Prompt Engineering Studio</h1>
-                        <p>Author expert system directives, context tags, few-shots, and calibrate response style.</p>
-                    </div>
-                </header>
+            <div class="flex-1 grid grid-cols-1 xl:grid-cols-2 gap-8 min-h-0">
                 
-                <div class="playground-layout">
-                    <div class="playground-inputs">
-                        <!-- System Prompt Card -->
-                        <article class="glass-card system-prompt-card">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <div class="form-label">
-                                    <span>SYSTEM PROMPT DIRECTIVE</span>
-                                    <span class="desc">Persona, boundary constraints, guardrails</span>
-                                </div>
-                                <textarea class="textarea-input code-font" id="playground-system-prompt" rows="6" placeholder="You are an expert technical author. Your goal is to explain complex coding structures in markdown tables..."></textarea>
-                                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-                                    <span style="font-size:0.75rem; color:var(--text-muted);">Sub-word BPE Tokens:</span>
-                                    <span class="token-badge-counter" id="token-count-sys">0</span>
-                                </div>
-                                <div class="tokenizer-pills-container" id="tokenizer-pills-sys">
-                                    <span style="font-size:0.75rem; color:var(--text-muted); font-style:italic;">Tokenizer empty. Type above to count sub-word tokens.</span>
-                                </div>
-                            </div>
-                        </article>
-
-                        <!-- Few-Shot Builder Card -->
-                        <article class="glass-card fewshot-card">
-                            <div class="fewshot-header">
-                                <div class="form-label" style="margin-bottom: 0;">
-                                    <span>FEW-SHOT EXEMPLARS BUILDER</span>
-                                </div>
-                                <button class="btn btn-secondary" id="btn-add-fewshot" style="padding: 6px 12px; font-size: 0.8rem;">+ Add Example</button>
-                            </div>
-                            <div class="fewshot-list" id="fewshot-list-container"></div>
-                        </article>
-
-                        <!-- User Prompt Card -->
-                        <article class="glass-card user-prompt-card">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <div class="form-label">
-                                    <span>USER PROMPT INSTRUCTIONS</span>
-                                    <span class="desc">Active request input</span>
-                                </div>
-                                <textarea class="textarea-input" id="playground-user-prompt" rows="4" placeholder="Enter your instructions or wrap raw context datasets in delimiters..."></textarea>
-                                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-                                    <span style="font-size:0.75rem; color:var(--text-muted);">Sub-word BPE Tokens:</span>
-                                    <span class="token-badge-counter" id="token-count-user">0</span>
-                                </div>
-                                <div class="tokenizer-pills-container" id="tokenizer-pills-user">
-                                    <span style="font-size:0.75rem; color:var(--text-muted); font-style:italic;">Tokenizer empty. Type above to count sub-word tokens.</span>
-                                </div>
-                            </div>
-                            
-                            <div class="playground-controls">
-                                <button class="btn btn-secondary" id="btn-reset-playground">Clear Workspace</button>
-                                <button class="btn btn-primary" id="btn-submit-prompt" style="padding: 12px 28px;">
-                                    Submit Prompt
-                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                </button>
-                            </div>
-                        </article>
-                    </div>
-
-                    <!-- Right: Parameters & Output Terminal -->
-                    <div class="playground-results">
-                        <article class="glass-card">
-                            <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 12px;">Model Control Parameters</h3>
-                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-                                <div>
-                                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:500; color:var(--text-muted); margin-bottom:6px;">
-                                        <span>Temperature</span>
-                                        <span style="color:var(--accent-cyan); font-weight:700;" id="val-temp">0.70</span>
-                                    </div>
-                                    <input type="range" class="param-slider" id="param-temp" min="0" max="1.5" step="0.05" value="0.70" style="-webkit-appearance:none; appearance:none; width:100%; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; outline:none;">
-                                </div>
-                                <div>
-                                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:500; color:var(--text-muted); margin-bottom:6px;">
-                                        <span>Max Output Tokens</span>
-                                        <span style="color:var(--accent-cyan); font-weight:700;" id="val-tokens">512</span>
-                                    </div>
-                                    <input type="range" class="param-slider" id="param-tokens" min="32" max="2048" step="32" value="512" style="-webkit-appearance:none; appearance:none; width:100%; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; outline:none;">
-                                </div>
-                            </div>
-                        </article>
-
-                        <!-- Response Terminal -->
-                        <article class="glass-card">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                                <h3 style="font-size: 0.95rem; font-weight: 700;">Model Output Terminal</h3>
-                                <div style="display:flex; align-items:center; gap:8px; font-size:0.75rem; color:var(--text-muted);">
-                                    <div class="spinner" id="output-spinner" style="width:12px; height:12px; border:2px solid rgba(255,255,255,0.1); border-top-color:var(--accent-cyan); border-radius:50%; display:none;"></div>
-                                    <span id="output-status" style="font-weight:600;">Terminal Idle</span>
-                                </div>
-                            </div>
-                            
-                            <div class="terminal-window">
-                                <div class="cot-terminal-block" id="cot-terminal-block" style="display:none;">
-                                    <div class="cot-label">
-                                        <svg viewBox="0 0 24 24" width="12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
-                                        Chain-of-Thought Scratchpad
-                                    </div>
-                                    <div id="cot-content"></div>
-                                </div>
-                                <div class="response-block response-placeholder" id="response-content">Awaiting token submission...</div>
-                            </div>
-                        </article>
-
-                        <!-- Auditor Panel -->
-                        <article class="glass-card auditor-dashboard">
-                            <div class="auditor-metrics">
-                                <div class="score-circle-wrapper">
-                                    <svg class="score-svg">
-                                        <circle class="score-circle-bg" cx="40" cy="40" r="35"></circle>
-                                        <circle class="score-circle-bar" id="score-circle-bar" cx="40" cy="40" r="35"></circle>
-                                        <defs>
-                                            <linearGradient id="score-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                <stop offset="0%" stop-color="var(--accent-cyan)"></stop>
-                                                <stop offset="100%" stop-color="var(--accent-blue)"></stop>
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>
-                                    <div class="score-text" id="score-val">0</div>
-                                </div>
-                                <div class="score-info">
-                                    <h3 id="score-grade-title">Evaluating Prompt...</h3>
-                                    <p id="score-grade-desc">Loading metrics.</p>
-                                </div>
-                            </div>
-
-                            <div class="audit-details-grid">
-                                <div class="audit-column strengths">
-                                    <h4>Detected Strengths</h4>
-                                    <ul class="audit-list" id="auditor-strengths"></ul>
-                                </div>
-                                <div class="audit-column improvements">
-                                    <h4>Suggested Refinements</h4>
-                                    <ul class="audit-list" id="auditor-improvements"></ul>
-                                </div>
-                            </div>
-
-                            <div class="assembler-drawer">
-                                <div class="drawer-header" id="assembler-drawer-header">
-                                    <span>VIEW COMPILED PROMPT TOKEN STREAM</span>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"></path></svg>
-                                </div>
-                                <div class="drawer-content" id="assembler-drawer-content"></div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-            </section>
-
-            <!-- VIEW: METAPROMPT GENERATOR (Rendered by app.js) -->
-            <section class="hide" id="view-metaprompt"></section>
-
-            <!-- VIEW: A/B COMPARISON ARENA (Rendered by app.js) -->
-            <section class="hide" id="view-arena"></section>
-
-            <!-- VIEW: RED-TEAM SECURITY (Rendered by app.js) -->
-            <section class="hide" id="view-security"></section>
-
-            <!-- VIEW: ACADEMY LESSONS -->
-            <section class="hide" id="view-lessons">
-                <header class="view-header">
-                    <div class="view-title">
-                        <h1>CBT Nuggets Academy Companion</h1>
-                        <p>Deep-dive prompt engineering principles. Explore templates and load them instantly into the studio.</p>
-                    </div>
-                </header>
-                <div class="lessons-layout">
-                    <aside class="lessons-sidebar" id="lessons-menu-list"></aside>
-                    <article class="lesson-workspace" id="active-lesson-container"></article>
-                </div>
-            </section>
-
-            <!-- VIEW: GAMIFIED QUESTS -->
-            <section class="hide" id="view-challenges">
-                <header class="view-header">
-                    <div class="view-title">
-                        <h1>Gamified Prompt Quests</h1>
-                        <p>Solve prompt challenges. Author prompts that pass automated verification rules and secure reward badges!</p>
-                    </div>
-                </header>
-                <div class="challenges-grid" id="challenges-grid-view"></div>
-                <!-- Certificate Unlock Container -->
-                <div id="certificate-unlock-container"></div>
-                <!-- Quest Workspace Frame -->
-                <div class="challenge-workspace-container hide" id="challenge-workspace-view">
-                    <aside class="challenge-details-panel" id="challenge-info-panel"></aside>
-                    <div class="playground-inputs">
-                        <article class="glass-card system-prompt-card" style="border-left: 4px solid var(--accent-violet);">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <div class="form-label">
-                                    <span>YOUR SYSTEM PROMPT DIRECTIVE</span>
-                                    <span class="desc">Code your safety rules and directives here</span>
-                                </div>
-                                <textarea class="textarea-input code-font" id="challenge-system-prompt" rows="8" placeholder="Develop your system instructions to complete the quest goals..."></textarea>
-                            </div>
-                        </article>
-                        <article class="glass-card user-prompt-card" style="border-left: 4px solid var(--accent-cyan);">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <div class="form-label">
-                                    <span>QUEST EVALUATION INPUT DATA</span>
-                                    <span class="desc">System-delivered validation query</span>
-                                </div>
-                                <textarea class="textarea-input" id="challenge-user-prompt" rows="4" readonly style="opacity:0.85; cursor:not-allowed;"></textarea>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-            </section>
-
-            <!-- VIEW: LABORATORY LOGS -->
-            <section class="hide" id="view-history">
-                <header class="view-header">
-                    <div class="view-title">
-                        <h1>Laboratory Logs</h1>
-                        <p>Audit and search your past prompt iterations. Reload historical structures back into the studio.</p>
-                    </div>
-                </header>
-                <div class="history-layout">
-                    <div class="history-toolbar">
-                        <div class="search-input-wrapper">
-                            <input type="text" class="search-input" id="history-search" placeholder="Search logs by system directive or score...">
-                        </div>
-                        <button class="btn btn-secondary text-danger" id="btn-clear-history" style="border-color: transparent;">Clear All Logs</button>
-                    </div>
-                    <div class="history-list" id="history-cards-container"></div>
-                </div>
-            </section>
-
-            <!-- VIEW: LAB CONFIGURATIONS -->
-            <section class="hide" id="view-settings">
-                <header class="view-header">
-                    <div class="view-title">
-                        <h1>Laboratory Configurations</h1>
-                        <p>Configure model engines. Switch between local simulation mode and live production APIs.</p>
-                    </div>
-                </header>
-                <div class="settings-layout">
-                    <article class="glass-card settings-card">
-                        <h3>Model Processing Mode</h3>
-                        <p>Select which backend runs your prompts. <b>Simulated Mode</b> runs instant heuristic calculations locally. <b>Live API Mode</b> routes queries directly to official production models.</p>
-                        <div class="radio-group">
-                            <label class="radio-option selected" for="mode-simulated">
-                                <input type="radio" name="model-mode" id="mode-simulated" value="simulated" checked>
-                                <div class="radio-option-content">
-                                    <h4>Simulated Engine (Offline-Ready)</h4>
-                                    <p>Heuristic matching, audits prompts instantly without paid keys.</p>
-                                </div>
-                            </label>
-                            <label class="radio-option" for="mode-live">
-                                <input type="radio" name="model-mode" id="mode-live" value="live">
-                                <div class="radio-option-content">
-                                    <h4>Live API Integration Mode</h4>
-                                    <p>Connect direct browser requests to Google Gemini, OpenAI, or Anthropic models.</p>
-                                </div>
-                            </label>
-                        </div>
-                    </article>
-
-                    <article class="glass-card settings-card hide" id="live-provider-settings">
-                        <h3>Official API Credentials</h3>
-                        <p>Your API credentials are stored exclusively in your browser's private localStorage and never leave your machine.</p>
-                        <div class="radio-group" style="margin-bottom: 24px;">
-                            <label class="radio-option selected" for="provider-gemini">
-                                <input type="radio" name="live-provider" id="provider-gemini" value="gemini" checked>
-                                <div class="radio-option-content">
-                                    <h4>Google Gemini (gemini-2.0-flash)</h4>
-                                    <p>Fast, robust, supports native browser calling with zero CORS issues.</p>
-                                </div>
-                            </label>
-                            <label class="radio-option" for="provider-openai">
-                                <input type="radio" name="live-provider" id="provider-openai" value="openai">
-                                <div class="radio-option-content">
-                                    <h4>OpenAI (gpt-4o-mini)</h4>
-                                    <p>Cost-effective, highly reliable, direct browser integration.</p>
-                                </div>
-                            </label>
-                            <label class="radio-option" for="provider-anthropic">
-                                <input type="radio" name="live-provider" id="provider-anthropic" value="anthropic">
-                                <div class="radio-option-content">
-                                    <h4>Anthropic (claude-3-5-sonnet)</h4>
-                                    <p>Requires local proxy config; standard browsers block direct Anthropic calls.</p>
-                                </div>
-                            </label>
-                        </div>
-                        <div class="api-keys-grid">
-                            <div class="form-group" style="margin-bottom: 12px;">
-                                <label class="form-label">Google Gemini API Key</label>
-                                <div class="key-input-wrapper">
-                                    <input type="password" class="text-input" id="key-gemini" placeholder="AIzaSy...">
-                                    <button class="btn-toggle-key" id="toggle-key-gemini" title="Toggle visibility">
-                                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 12px;">
-                                <label class="form-label">Gemini Model (Optional Override)</label>
-                                <div class="key-input-wrapper">
-                                    <input type="text" class="text-input" id="model-gemini" placeholder="e.g. gemini-1.5-flash-latest" style="font-family: monospace;">
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 12px;">
-                                <label class="form-label">OpenAI API Key</label>
-                                <div class="key-input-wrapper">
-                                    <input type="password" class="text-input" id="key-openai" placeholder="sk-proj-...">
-                                    <button class="btn-toggle-key" id="toggle-key-openai" title="Toggle visibility">
-                                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 20px;">
-                                <label class="form-label">Anthropic API Key</label>
-                                <div class="key-input-wrapper">
-                                    <input type="password" class="text-input" id="key-anthropic" placeholder="sk-ant-...">
-                                    <button class="btn-toggle-key" id="toggle-key-anthropic" title="Toggle visibility">
-                                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="display:flex; justify-content: flex-end; gap:12px;">
-                            <button class="btn btn-primary" id="btn-save-keys" style="padding: 12px 28px;">Save API Credentials</button>
-                        </div>
-                        <div class="settings-badge-note">
-                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-top:2px; flex-shrink:0;"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <!-- Left Column: Inputs -->
+                <div class="flex flex-col gap-6 overflow-y-auto pr-2 pb-8">
+                    <!-- System Prompt -->
+                    <div class="glass-card flex flex-col">
+                        <div class="flex justify-between items-end mb-3">
                             <div>
-                                <span style="font-weight: 700; display:block; margin-bottom: 2px;">Local Storage Isolation Safeguard</span>
-                                <span>Your keys never touch any server. They are parsed and executed purely in memory inside your browser process.</span>
+                                <label class="text-xs font-bold text-accentBase uppercase tracking-wider block">Structural Blueprint (System)</label>
+                                <span class="text-xs text-zinc-500">Persona, boundary constraints, guardrails</span>
+                            </div>
+                            <div class="text-xs text-zinc-500 flex items-center gap-2">Tokens: <span id="token-count-sys" class="px-2 py-0.5 bg-zinc-800 rounded font-mono text-white">0</span></div>
+                        </div>
+                        <textarea id="playground-system-prompt" class="textarea-input code-font resize-y h-32" placeholder="ROLE: System Architect&#10;TASK: ..."></textarea>
+                        <div id="tokenizer-pills-sys" class="mt-3 flex flex-wrap gap-1 max-h-20 overflow-y-auto"></div>
+                    </div>
+
+                    <!-- Few Shots -->
+                    <div class="glass-card flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <label class="text-xs font-bold text-white uppercase tracking-wider">Velocity Exemplars (Few-Shot)</label>
+                            <button id="btn-add-fewshot" class="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-white rounded transition-colors">+ Add Vector</button>
+                        </div>
+                        <div id="fewshot-list-container" class="space-y-0"></div>
+                    </div>
+
+                    <!-- User Prompt -->
+                    <div class="glass-card flex flex-col">
+                        <div class="flex justify-between items-end mb-3">
+                            <div>
+                                <label class="text-xs font-bold text-emerald-400 uppercase tracking-wider block">Payload Data (User)</label>
+                                <span class="text-xs text-zinc-500">Active request input</span>
+                            </div>
+                            <div class="text-xs text-zinc-500 flex items-center gap-2">Tokens: <span id="token-count-user" class="px-2 py-0.5 bg-zinc-800 rounded font-mono text-white">0</span></div>
+                        </div>
+                        <textarea id="playground-user-prompt" class="textarea-input resize-y h-24 text-zinc-200" placeholder="Insert heavy text or payload data here..."></textarea>
+                        <div id="tokenizer-pills-user" class="mt-3 flex flex-wrap gap-1 max-h-20 overflow-y-auto"></div>
+                        
+                        <div class="mt-6 flex justify-between items-center pt-4 border-t border-zinc-800">
+                            <button id="btn-reset-playground" class="text-sm text-zinc-500 hover:text-white transition-colors">Clear Matrix</button>
+                            <button id="btn-submit-prompt" class="px-6 py-2.5 bg-accentBase hover:bg-accentDark text-white font-bold rounded-lg shadow-[0_0_15px_rgba(56,189,248,0.4)] transition-all flex items-center gap-2">
+                                Execute Vector
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Outputs -->
+                <div class="flex flex-col gap-6 overflow-y-auto pr-2 pb-8">
+                    
+                    <!-- Auditor Dashboard -->
+                    <div class="glass-card">
+                        <div class="flex items-center gap-6 mb-6">
+                            <div class="relative w-20 h-20 shrink-0">
+                                <svg class="score-svg w-full h-full">
+                                    <circle class="score-circle-bg" cx="40" cy="40" r="35"></circle>
+                                    <circle class="score-circle-bar" id="score-circle-bar" cx="40" cy="40" r="35"></circle>
+                                </svg>
+                                <div id="score-val" class="absolute inset-0 flex items-center justify-center text-xl font-black text-accentBase">0</div>
+                            </div>
+                            <div>
+                                <h3 id="score-grade-title" class="text-lg font-bold text-white">Awaiting Input</h3>
+                                <p id="score-grade-desc" class="text-sm text-zinc-400 mt-1">Begin typing to calculate Zero-Mass efficiency.</p>
                             </div>
                         </div>
-                    </article>
-                </div>
-            </section>
+                        
+                        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-800">
+                            <div>
+                                <h4 class="text-xs font-bold text-emerald-500 uppercase mb-2">Mass Reduction</h4>
+                                <ul id="auditor-strengths" class="text-xs text-zinc-400 space-y-1 list-disc pl-4"></ul>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-amber-500 uppercase mb-2">Structural Drift</h4>
+                                <ul id="auditor-improvements" class="text-xs text-zinc-400 space-y-1 list-disc pl-4"></ul>
+                            </div>
+                        </div>
 
-        </main>
+                        <!-- Assembler Drawer -->
+                        <div class="mt-6 border border-zinc-700 rounded-lg overflow-hidden">
+                            <button id="assembler-drawer-header" class="w-full px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-white flex justify-between items-center transition-colors">
+                                <span>VIEW COMPILED TOKEN STREAM</span>
+                                <svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="assembler-drawer-content" class="hide p-4 bg-black font-mono text-xs whitespace-pre-wrap text-zinc-400 overflow-x-auto"></div>
+                        </div>
+                    </div>
+
+                    <!-- Parameter Sliders -->
+                    <div class="glass-card grid grid-cols-2 gap-6">
+                        <div>
+                            <div class="flex justify-between text-xs mb-2">
+                                <span class="font-bold text-zinc-400 uppercase">Temperature</span>
+                                <span id="val-temp" class="font-mono text-accentBase">0.70</span>
+                            </div>
+                            <input type="range" id="param-temp" min="0" max="1.5" step="0.05" value="0.70" class="w-full accent-accentBase">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-2">
+                                <span class="font-bold text-zinc-400 uppercase">Max Output Tokens</span>
+                                <span id="val-tokens" class="font-mono text-accentBase">512</span>
+                            </div>
+                            <input type="range" id="param-tokens" min="32" max="2048" step="32" value="512" class="w-full accent-accentBase">
+                        </div>
+                    </div>
+
+                    <!-- Response Terminal -->
+                    <div class="glass-card flex flex-col flex-1 min-h-[300px] overflow-hidden p-0 border-none">
+                        <div class="px-4 py-3 bg-zinc-900 border-b border-zinc-800 flex justify-between items-center shrink-0">
+                            <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M4 12a8 8 0 1116 0 8 8 0 01-16 0z"></path></svg>
+                                Execution Output
+                            </h3>
+                            <div class="flex items-center gap-2 text-xs">
+                                <div id="output-spinner" class="w-3 h-3 border-2 border-zinc-600 border-t-accentBase rounded-full animate-spin hide"></div>
+                                <span id="output-status" class="text-zinc-500 font-mono uppercase">Idle</span>
+                            </div>
+                        </div>
+                        <div class="p-4 overflow-y-auto flex-1 bg-black/50 font-mono text-sm leading-relaxed">
+                            <div id="cot-terminal-block" class="hide mb-4 p-3 bg-zinc-900/80 border border-zinc-800 rounded text-zinc-400 text-xs">
+                                <div class="text-amber-500 mb-2 font-bold uppercase tracking-wider flex items-center gap-2">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                    Cognitive Processing (CoT)
+                                </div>
+                                <div id="cot-content" class="whitespace-pre-wrap"></div>
+                            </div>
+                            <div id="response-content" class="text-zinc-500 whitespace-pre-wrap">Awaiting token submission...</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Hidden required views for app.js so it doesn't crash -->
+        <section id="view-history" class="hide"></section>
+        <section id="view-metaprompt" class="hide"></section>
+        <section id="view-security" class="hide"></section>
+        <section id="view-arena" class="hide"></section>
+        
+        <!-- Settings (Lab Config) -->
+        <section id="view-settings" class="hide p-8 max-w-4xl mx-auto">
+            <header class="mb-10">
+                <h1 class="text-3xl font-black text-white tracking-tight mb-2">Engine Configuration</h1>
+                <p class="text-zinc-400">Manage your Zero-Mass execution environments and API integrations.</p>
+            </header>
+            
+            <div class="space-y-6">
+                <!-- Mode Selection -->
+                <div class="glass-card">
+                    <h3 class="text-lg font-bold text-white mb-4">Core Processing Engine</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="relative flex cursor-pointer rounded-lg border bg-zinc-900 p-4 shadow-sm focus:outline-none border-accentBase ring-1 ring-accentBase">
+                            <input type="radio" name="model-mode" id="mode-simulated" value="simulated" class="sr-only" checked>
+                            <span class="flex flex-1">
+                                <span class="flex flex-col">
+                                    <span class="block text-sm font-medium text-white">Simulated Engine (Offline)</span>
+                                    <span class="mt-1 flex items-center text-sm text-zinc-400">Instant heuristic calculations locally.</span>
+                                </span>
+                            </span>
+                            <svg class="h-5 w-5 text-accentBase" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                        </label>
+                        <label class="relative flex cursor-pointer rounded-lg border border-zinc-700 bg-zinc-900 p-4 shadow-sm focus:outline-none hover:bg-zinc-800">
+                            <input type="radio" name="model-mode" id="mode-live" value="live" class="sr-only">
+                            <span class="flex flex-1">
+                                <span class="flex flex-col">
+                                    <span class="block text-sm font-medium text-white">Live API Integration</span>
+                                    <span class="mt-1 flex items-center text-sm text-zinc-400">Route queries directly to production models.</span>
+                                </span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- API Keys (hidden by default) -->
+                <div id="live-provider-settings" class="hide glass-card">
+                    <h3 class="text-lg font-bold text-white mb-4">Production Model Endpoints</h3>
+                    
+                    <div class="flex gap-4 mb-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="live-provider" value="gemini" class="text-accentBase bg-zinc-800 border-zinc-700" checked>
+                            <span class="text-sm font-medium text-white">Google Gemini</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="live-provider" value="openai" class="text-accentBase bg-zinc-800 border-zinc-700">
+                            <span class="text-sm font-medium text-white">OpenAI</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="live-provider" value="anthropic" class="text-accentBase bg-zinc-800 border-zinc-700">
+                            <span class="text-sm font-medium text-white">Anthropic</span>
+                        </label>
+                    </div>
+
+                    <div class="space-y-4 max-w-xl">
+                        <div>
+                            <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Gemini API Key</label>
+                            <div class="flex gap-2">
+                                <input type="password" id="key-gemini" class="flex-1 bg-black border border-zinc-700 rounded p-2 text-sm text-white focus:border-accentBase focus:outline-none" placeholder="AIzaSy...">
+                                <button id="toggle-key-gemini" class="px-3 bg-zinc-800 border border-zinc-700 rounded text-zinc-400 hover:text-white">👁</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Gemini Model Override</label>
+                            <input type="text" id="model-gemini" class="w-full bg-black border border-zinc-700 rounded p-2 text-sm font-mono text-white focus:border-accentBase focus:outline-none" placeholder="e.g. gemini-1.5-flash-latest">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">OpenAI API Key</label>
+                            <div class="flex gap-2">
+                                <input type="password" id="key-openai" class="flex-1 bg-black border border-zinc-700 rounded p-2 text-sm text-white focus:border-accentBase focus:outline-none" placeholder="sk-proj-...">
+                                <button id="toggle-key-openai" class="px-3 bg-zinc-800 border border-zinc-700 rounded text-zinc-400 hover:text-white">👁</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Anthropic API Key</label>
+                            <div class="flex gap-2">
+                                <input type="password" id="key-anthropic" class="flex-1 bg-black border border-zinc-700 rounded p-2 text-sm text-white focus:border-accentBase focus:outline-none" placeholder="sk-ant-...">
+                                <button id="toggle-key-anthropic" class="px-3 bg-zinc-800 border border-zinc-700 rounded text-zinc-400 hover:text-white">👁</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-end">
+                        <button id="btn-save-keys" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded shadow-lg transition-colors">
+                            Save Configuration
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Hidden DOM dependencies to prevent app.js from crashing for unused legacy views -->
+    <div style="display:none;">
+        <div id="history-cards-container"></div>
+        <input type="text" id="history-search">
+        <button id="btn-clear-history"></button>
     </div>
 
-    <!-- Sequential JavaScript module loads -->
+    <!-- Scripts -->
     <script src="data/lessons.js"></script>
     <script src="data/challenges.js"></script>
     <script src="services/tokenizer.js"></script>
